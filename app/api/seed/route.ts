@@ -18,7 +18,7 @@ const MENU_SEED = [
     description: 'Feuilles d\'eru mijotées avec waterleaf, huile de palme et viande fumée.',
     price: 15,
     category: 'Plats',
-    image: 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650557/eru_nolnxb.png',
     available: true,
   },
   {
@@ -51,7 +51,7 @@ const MENU_SEED = [
     description: 'Bar entier grillé au charbon, servi avec sauce tomate et plantain.',
     price: 15,
     category: 'Braise',
-    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650557/fish2_igp3mq.png',
     available: true,
   },
   {
@@ -140,7 +140,7 @@ const MENU_SEED = [
     description: 'Farine de manioc fermenté, accompagnement traditionnel ouest-africain.',
     price: 3,
     category: 'Accompagnements',
-    image: 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650557/garri_ubcuus.png',
     available: true,
   },
   {
@@ -148,7 +148,7 @@ const MENU_SEED = [
     description: 'Manioc fermenté et cuit en feuille de bananier (Bobolo).',
     price: 3,
     category: 'Accompagnements',
-    image: 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650558/miondo_hwmsxa.png',
     available: true,
   },
   // ── Boissons ───────────────────────────────────────────
