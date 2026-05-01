@@ -6,11 +6,11 @@ import { Order } from '@/models/Order'
 const MENU_SEED = [
   // ── Plats ──────────────────────────────────────────────
   {
-    name: 'Taro / Achou',
+    name: 'Taro / Achu',
     description: 'Plat traditionnel camerounais à base de taro pilé, servi avec sauce viande.',
     price: 18,
     category: 'Plats',
-    image: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650557/Achu_r7lium.png',
     available: true,
   },
   {
@@ -26,7 +26,7 @@ const MENU_SEED = [
     description: 'Feuilles de ndolé aux arachides, crevettes et viande. Plat national camerounais.',
     price: 15,
     category: 'Plats',
-    image: 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650558/ndol%C3%A9_wqahkd.png',
     available: true,
   },
   {
@@ -34,7 +34,7 @@ const MENU_SEED = [
     description: 'Sauce gombo à base d\'okra, poisson fumé et épices africaines.',
     price: 15,
     category: 'Plats',
-    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650558/gombo_rxne5l.png',
     available: true,
   },
   {
@@ -59,7 +59,7 @@ const MENU_SEED = [
     description: 'Tilapia grillé, mariné aux épices africaines. Petit 12€ / Grand 15€.',
     price: 12,
     category: 'Braise',
-    image: 'https://images.unsplash.com/photo-1725393325387-07f0d4951528?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650558/fish_cvn5i0.png',
     available: true,
   },
   {
@@ -83,7 +83,7 @@ const MENU_SEED = [
     description: 'Brochettes de viande marinée grillées au charbon.',
     price: 10,
     category: 'Braise',
-    image: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650558/brochettes_tcgb7e.png',
     available: true,
   },
   {
@@ -108,7 +108,7 @@ const MENU_SEED = [
     description: 'Plantain mûr cuit à l\'eau.',
     price: 3,
     category: 'Accompagnements',
-    image: 'https://images.unsplash.com/photo-1590165482129-1b8b27698780?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650558/plantain_lxsivx.png',
     available: true,
   },
   {
@@ -116,7 +116,7 @@ const MENU_SEED = [
     description: 'Plantain grillé au charbon, légèrement caramélisé.',
     price: 3,
     category: 'Accompagnements',
-    image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650558/Tap%C3%A9_uyrihg.png',
     available: true,
   },
   {
@@ -132,7 +132,7 @@ const MENU_SEED = [
     description: 'Semoule de maïs ou blé, épaisse et onctueuse.',
     price: 3,
     category: 'Accompagnements',
-    image: 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777650558/s%C3%A9moule_x436ti.png',
     available: true,
   },
   {
