@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ShoppingCart } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
 import CartDrawer from './CartDrawer'
@@ -8,6 +8,9 @@ import CartDrawer from './CartDrawer'
 export default function CartButton() {
   const itemCount = useCartStore((s) => s.itemCount())
   const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => { setMounted(true) }, [])
 
   return (
     <>
@@ -17,7 +20,7 @@ export default function CartButton() {
         aria-label="Open cart"
       >
         <ShoppingCart size={22} />
-        {itemCount > 0 && (
+        {mounted && itemCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
             {itemCount > 99 ? '99+' : itemCount}
           </span>
