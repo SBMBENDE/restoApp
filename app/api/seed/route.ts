@@ -59,7 +59,7 @@ const MENU_SEED = [
     description: 'Tilapia grillé, mariné aux épices africaines. Petit 12€ / Grand 15€.',
     price: 12,
     category: 'Braise',
-    image: 'https://images.unsplash.com/photo-1598511757337-fe2cafc31ba0?w=400',
+    image: 'https://images.unsplash.com/photo-1725393325387-07f0d4951528?w=400',
     available: true,
   },
   {
@@ -91,7 +91,7 @@ const MENU_SEED = [
     description: 'Morceaux de porc marinés et grillés, servis avec sauce piquante.',
     price: 12,
     category: 'Braise',
-    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400',
+    image: 'https://images.unsplash.com/photo-1760504526047-69dcd554e14a?w=400',
     available: true,
   },
   // ── Accompagnements ────────────────────────────────────
@@ -112,7 +112,7 @@ const MENU_SEED = [
     available: true,
   },
   {
-    name: 'Plantain braisé',
+    name: 'Plantain Tapé',
     description: 'Plantain grillé au charbon, légèrement caramélisé.',
     price: 3,
     category: 'Accompagnements',
@@ -124,7 +124,7 @@ const MENU_SEED = [
     description: 'Tranches de plantain frites, dorées et croustillantes.',
     price: 3,
     category: 'Accompagnements',
-    image: 'https://images.unsplash.com/photo-1621217038523-d5f4e8b0d73c?w=400',
+    image: 'https://images.unsplash.com/photo-1563336522-c3bd728d3b45?w=400',
     available: true,
   },
   {
