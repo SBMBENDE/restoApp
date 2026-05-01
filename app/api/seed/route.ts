@@ -42,7 +42,7 @@ const MENU_SEED = [
     description: 'Ailes de poulet marinées et grillées, accompagnées de sauce piquante.',
     price: 10,
     category: 'Plats',
-    image: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777652100/ailles_fqb4xi.png',
     available: true,
   },
   // ── Braise ─────────────────────────────────────────────
@@ -67,7 +67,7 @@ const MENU_SEED = [
     description: 'Chinchard braisé au feu de bois, servi avec sauce pimentée.',
     price: 15,
     category: 'Braise',
-    image: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777652100/chinchard_da2iwt.png',
     available: true,
   },
   {
@@ -75,7 +75,7 @@ const MENU_SEED = [
     description: 'Maquereau entier grillé, parfumé aux herbes et citron.',
     price: 15,
     category: 'Braise',
-    image: 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777652100/makereau_rkfpcs.png',
     available: true,
   },
   {
