@@ -173,7 +173,7 @@ const MENU_SEED = [
     description: 'Soda pétillant au pamplemousse.',
     price: 6,
     category: 'Boissons',
-    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/logo_idrmeb.png',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/top_zbrfjr.png',
     available: true,
   },
   {

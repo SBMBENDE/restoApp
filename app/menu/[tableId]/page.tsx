@@ -6,7 +6,7 @@ import { IMenuItem } from '@/models/MenuItem'
 import { useCartStore } from '@/store/cartStore'
 import MenuItemCard from '@/components/MenuItemCard'
 import CartButton from '@/components/CartButton'
-import { UtensilsCrossed } from 'lucide-react'
+import Image from 'next/image'
 
 const CATEGORIES_ORDER = ['Plats', 'Braise', 'Accompagnements', 'Boissons', 'Bières', 'Vins', 'Champagnes']
 
@@ -55,7 +55,13 @@ export default function MenuPage() {
       <header className="sticky top-0 z-30 bg-white border-b shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <UtensilsCrossed className="text-amber-500" size={28} />
+            <Image
+              src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/logo_idrmeb.png"
+              alt="Le KIRA"
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
             <div>
               <h1 className="text-xl font-bold text-gray-900 leading-none">Le KIRA</h1>
               <p className="text-xs text-gray-400">Table {tableId}</p>
