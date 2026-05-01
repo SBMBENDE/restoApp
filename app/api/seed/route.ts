@@ -169,19 +169,11 @@ const MENU_SEED = [
     available: true,
   },
   {
-    name: 'TOP Grenadine',
-    description: 'Soda pétillant à la grenadine.',
-    price: 6,
-    category: 'Boissons',
-    image: 'https://images.unsplash.com/photo-1437418747212-8d9709afab22?w=400',
-    available: true,
-  },
-  {
-    name: 'TOP Pamplemousse',
+    name: 'TOPs',
     description: 'Soda pétillant au pamplemousse.',
     price: 6,
     category: 'Boissons',
-    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/top_zbrfjr.png',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/logo_idrmeb.png',
     available: true,
   },
   {
