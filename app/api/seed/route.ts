@@ -1,0 +1,305 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { connectDB } from '@/lib/mongodb'
+import { MenuItem } from '@/models/MenuItem'
+import { Order } from '@/models/Order'
+
+const MENU_SEED = [
+  // ── Plats ──────────────────────────────────────────────
+  {
+    name: 'Taro / Achou',
+    description: 'Plat traditionnel camerounais à base de taro pilé, servi avec sauce viande.',
+    price: 18,
+    category: 'Plats',
+    image: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400',
+    available: true,
+  },
+  {
+    name: 'Eru',
+    description: 'Feuilles d\'eru mijotées avec waterleaf, huile de palme et viande fumée.',
+    price: 15,
+    category: 'Plats',
+    image: 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400',
+    available: true,
+  },
+  {
+    name: 'Ndolé',
+    description: 'Feuilles de ndolé aux arachides, crevettes et viande. Plat national camerounais.',
+    price: 15,
+    category: 'Plats',
+    image: 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400',
+    available: true,
+  },
+  {
+    name: 'Ngombo',
+    description: 'Sauce gombo à base d\'okra, poisson fumé et épices africaines.',
+    price: 15,
+    category: 'Plats',
+    image: 'https://images.unsplash.com/photo-1547592180-85f173990554?w=400',
+    available: true,
+  },
+  {
+    name: 'Ailes de poulet',
+    description: 'Ailes de poulet marinées et grillées, accompagnées de sauce piquante.',
+    price: 10,
+    category: 'Plats',
+    image: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=400',
+    available: true,
+  },
+  // ── Braise ─────────────────────────────────────────────
+  {
+    name: 'Poisson Bar',
+    description: 'Bar entier grillé au charbon, servi avec sauce tomate et plantain.',
+    price: 15,
+    category: 'Braise',
+    image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400',
+    available: true,
+  },
+  {
+    name: 'Tilapia braisé',
+    description: 'Tilapia grillé, mariné aux épices africaines. Petit 12€ / Grand 15€.',
+    price: 12,
+    category: 'Braise',
+    image: 'https://images.unsplash.com/photo-1598511757337-fe2cafc31ba0?w=400',
+    available: true,
+  },
+  {
+    name: 'Chinchard',
+    description: 'Chinchard braisé au feu de bois, servi avec sauce pimentée.',
+    price: 15,
+    category: 'Braise',
+    image: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400',
+    available: true,
+  },
+  {
+    name: 'Maquereau braisé',
+    description: 'Maquereau entier grillé, parfumé aux herbes et citron.',
+    price: 15,
+    category: 'Braise',
+    image: 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400',
+    available: true,
+  },
+  {
+    name: 'Brochette',
+    description: 'Brochettes de viande marinée grillées au charbon.',
+    price: 10,
+    category: 'Braise',
+    image: 'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400',
+    available: true,
+  },
+  {
+    name: 'Porc braisé',
+    description: 'Morceaux de porc marinés et grillés, servis avec sauce piquante.',
+    price: 12,
+    category: 'Braise',
+    image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400',
+    available: true,
+  },
+  // ── Accompagnements ────────────────────────────────────
+  {
+    name: 'Riz',
+    description: 'Riz blanc cuit à la vapeur.',
+    price: 3,
+    category: 'Accompagnements',
+    image: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400',
+    available: true,
+  },
+  {
+    name: 'Plantain bouilli',
+    description: 'Plantain mûr cuit à l\'eau.',
+    price: 3,
+    category: 'Accompagnements',
+    image: 'https://images.unsplash.com/photo-1590165482129-1b8b27698780?w=400',
+    available: true,
+  },
+  {
+    name: 'Plantain braisé',
+    description: 'Plantain grillé au charbon, légèrement caramélisé.',
+    price: 3,
+    category: 'Accompagnements',
+    image: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400',
+    available: true,
+  },
+  {
+    name: 'Bananes frites',
+    description: 'Tranches de plantain frites, dorées et croustillantes.',
+    price: 3,
+    category: 'Accompagnements',
+    image: 'https://images.unsplash.com/photo-1621217038523-d5f4e8b0d73c?w=400',
+    available: true,
+  },
+  {
+    name: 'Semoule',
+    description: 'Semoule de maïs ou blé, épaisse et onctueuse.',
+    price: 3,
+    category: 'Accompagnements',
+    image: 'https://images.unsplash.com/photo-1567982047351-76b6f93e38ee?w=400',
+    available: true,
+  },
+  {
+    name: 'Garri',
+    description: 'Farine de manioc fermenté, accompagnement traditionnel ouest-africain.',
+    price: 3,
+    category: 'Accompagnements',
+    image: 'https://images.unsplash.com/photo-1604329760661-e71dc83f8f26?w=400',
+    available: true,
+  },
+  {
+    name: 'Manioc / Bobolo',
+    description: 'Manioc fermenté et cuit en feuille de bananier (Bobolo).',
+    price: 3,
+    category: 'Accompagnements',
+    image: 'https://images.unsplash.com/photo-1574484284002-952d92456975?w=400',
+    available: true,
+  },
+  // ── Boissons ───────────────────────────────────────────
+  {
+    name: 'Coca Cola',
+    description: 'Coca Cola bien frais. 33cl 3€ / 1L 6€.',
+    price: 3,
+    category: 'Boissons',
+    image: 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400',
+    available: true,
+  },
+  {
+    name: 'Fanta',
+    description: 'Fanta orange glacé. 33cl 3€ / 1L 6€.',
+    price: 3,
+    category: 'Boissons',
+    image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=400',
+    available: true,
+  },
+  {
+    name: 'TOP Grenadine',
+    description: 'Soda pétillant à la grenadine.',
+    price: 6,
+    category: 'Boissons',
+    image: 'https://images.unsplash.com/photo-1437418747212-8d9709afab22?w=400',
+    available: true,
+  },
+  {
+    name: 'TOP Pamplemousse',
+    description: 'Soda pétillant au pamplemousse.',
+    price: 6,
+    category: 'Boissons',
+    image: 'https://images.unsplash.com/photo-1463193257886-5e0a3ae5ea0d?w=400',
+    available: true,
+  },
+  {
+    name: "D'jino Cocktail",
+    description: 'Boisson fruitée D\'jino cocktail.',
+    price: 6,
+    category: 'Boissons',
+    image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400',
+    available: true,
+  },
+  // ── Bières ─────────────────────────────────────────────
+  {
+    name: 'Heineken',
+    description: 'Heineken 33cl bien fraîche.',
+    price: 5,
+    category: 'Bières',
+    image: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400',
+    available: true,
+  },
+  {
+    name: '1664',
+    description: 'Kronenbourg 1664 33cl.',
+    price: 5.50,
+    category: 'Bières',
+    image: 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=400',
+    available: true,
+  },
+  {
+    name: 'Mützig',
+    description: 'Bière africaine Mützig, bouteille.',
+    price: 10,
+    category: 'Bières',
+    image: 'https://images.unsplash.com/photo-1618183479302-1e0aa382c36b?w=400',
+    available: true,
+  },
+  {
+    name: 'Booster',
+    description: 'Bière Booster, bouteille.',
+    price: 10,
+    category: 'Bières',
+    image: 'https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400',
+    available: true,
+  },
+  {
+    name: '33 Export',
+    description: 'Bière 33 Export, bouteille.',
+    price: 10,
+    category: 'Bières',
+    image: 'https://images.unsplash.com/photo-1566633806827-2d0b17a0c0e0?w=400',
+    available: true,
+  },
+  {
+    name: 'Guinness',
+    description: 'Guinness stout. Canette 5€ / Bouteille 10€.',
+    price: 5,
+    category: 'Bières',
+    image: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400',
+    available: true,
+  },
+  // ── Vins ───────────────────────────────────────────────
+  {
+    name: 'Vin Rouge',
+    description: 'Vins rouges sélectionnés. Verre 15€ / Bouteille 20€.',
+    price: 15,
+    category: 'Vins',
+    image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400',
+    available: true,
+  },
+  {
+    name: 'Vin Blanc',
+    description: 'Vins blancs sélectionnés. Verre 15€ / Bouteille 20€.',
+    price: 15,
+    category: 'Vins',
+    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
+    available: true,
+  },
+  // ── Champagnes ─────────────────────────────────────────
+  {
+    name: 'Moët & Chandon',
+    description: 'Champagne Moët & Chandon, bouteille.',
+    price: 80,
+    category: 'Champagnes',
+    image: 'https://images.unsplash.com/photo-1582106245687-cbb466a9f07f?w=400',
+    available: true,
+  },
+  {
+    name: 'Veuve Clicquot',
+    description: 'Champagne Veuve Clicquot, bouteille.',
+    price: 90,
+    category: 'Champagnes',
+    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=400',
+    available: true,
+  },
+  {
+    name: 'Ruinart',
+    description: 'Champagne Ruinart, bouteille.',
+    price: 150,
+    category: 'Champagnes',
+    image: 'https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=400',
+    available: true,
+  },
+  {
+    name: 'Mumm',
+    description: 'Champagne G.H. Mumm, bouteille.',
+    price: 80,
+    category: 'Champagnes',
+    image: 'https://images.unsplash.com/photo-1605989897416-fb95cc2a1d2e?w=400',
+    available: true,
+  },
+]
+
+export async function POST(_req: NextRequest) {
+  if (process.env.NODE_ENV !== 'development') {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+  await connectDB()
+  await MenuItem.deleteMany({})
+  await Order.deleteMany({})
+  const items = await MenuItem.insertMany(MENU_SEED)
+  return NextResponse.json({ message: 'Database seeded', count: items.length })
+}
