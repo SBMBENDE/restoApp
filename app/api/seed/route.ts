@@ -181,7 +181,7 @@ const MENU_SEED = [
     description: 'Soda pétillant au pamplemousse.',
     price: 6,
     category: 'Boissons',
-    image: 'https://images.unsplash.com/photo-1463193257886-5e0a3ae5ea0d?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/top_zbrfjr.png',
     available: true,
   },
   {
@@ -189,7 +189,7 @@ const MENU_SEED = [
     description: 'Boisson fruitée D\'jino cocktail.',
     price: 6,
     category: 'Boissons',
-    image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/Djino_ewp8fn.png',
     available: true,
   },
   // ── Bières ─────────────────────────────────────────────
@@ -198,7 +198,7 @@ const MENU_SEED = [
     description: 'Heineken 33cl bien fraîche.',
     price: 5,
     category: 'Bières',
-    image: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656885/HEINEKEN_mhnbvm.png',
     available: true,
   },
   {
@@ -206,7 +206,7 @@ const MENU_SEED = [
     description: 'Kronenbourg 1664 33cl.',
     price: 5.50,
     category: 'Bières',
-    image: 'https://images.unsplash.com/photo-1535958636474-b021ee887b13?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656883/1664_ktisrc.png',
     available: true,
   },
   {
@@ -214,7 +214,7 @@ const MENU_SEED = [
     description: 'Bière africaine Mützig, bouteille.',
     price: 10,
     category: 'Bières',
-    image: 'https://images.unsplash.com/photo-1618183479302-1e0aa382c36b?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/mutzig_nprqxa.png',
     available: true,
   },
   {
@@ -222,7 +222,7 @@ const MENU_SEED = [
     description: 'Bière Booster, bouteille.',
     price: 10,
     category: 'Bières',
-    image: 'https://images.unsplash.com/photo-1571613316887-6f8d5cbf7ef7?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/BOOSTER_tylwj9.png',
     available: true,
   },
   {
@@ -230,7 +230,7 @@ const MENU_SEED = [
     description: 'Bière 33 Export, bouteille.',
     price: 10,
     category: 'Bières',
-    image: 'https://images.unsplash.com/photo-1566633806827-2d0b17a0c0e0?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656977/33_vdjynu.png',
     available: true,
   },
   {
@@ -238,7 +238,7 @@ const MENU_SEED = [
     description: 'Guinness stout. Canette 5€ / Bouteille 10€.',
     price: 5,
     category: 'Bières',
-    image: 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/gUINESS_h93agn.png',
     available: true,
   },
   // ── Vins ───────────────────────────────────────────────
@@ -247,7 +247,7 @@ const MENU_SEED = [
     description: 'Vins rouges sélectionnés. Verre 15€ / Bouteille 20€.',
     price: 15,
     category: 'Vins',
-    image: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656883/vin_rouge_depzkp.png',
     available: true,
   },
   {
@@ -255,7 +255,7 @@ const MENU_SEED = [
     description: 'Vins blancs sélectionnés. Verre 15€ / Bouteille 20€.',
     price: 15,
     category: 'Vins',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656883/vin_blanc_uzfkgt.png',
     available: true,
   },
   // ── Champagnes ─────────────────────────────────────────
@@ -264,7 +264,7 @@ const MENU_SEED = [
     description: 'Champagne Moët & Chandon, bouteille.',
     price: 80,
     category: 'Champagnes',
-    image: 'https://images.unsplash.com/photo-1582106245687-cbb466a9f07f?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656883/Moet_wvkjlf.png',
     available: true,
   },
   {
@@ -272,7 +272,7 @@ const MENU_SEED = [
     description: 'Champagne Veuve Clicquot, bouteille.',
     price: 90,
     category: 'Champagnes',
-    image: 'https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/veuve_pzbe1k.png',
     available: true,
   },
   {
@@ -280,7 +280,7 @@ const MENU_SEED = [
     description: 'Champagne Ruinart, bouteille.',
     price: 150,
     category: 'Champagnes',
-    image: 'https://images.unsplash.com/photo-1547595628-c61a29f496f0?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656883/ruinart_xlvfpd.png',
     available: true,
   },
   {
@@ -288,7 +288,7 @@ const MENU_SEED = [
     description: 'Champagne G.H. Mumm, bouteille.',
     price: 80,
     category: 'Champagnes',
-    image: 'https://images.unsplash.com/photo-1605989897416-fb95cc2a1d2e?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656883/MUMM_jhj2gp.png',
     available: true,
   },
 ]
