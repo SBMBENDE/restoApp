@@ -38,6 +38,14 @@ const MENU_SEED = [
     available: true,
   },
   {
+    name: 'Egussi',
+    description: 'Soupe d\'egussi aux graines de courge, légumes et viande.',
+    price: 15,
+    category: 'Plats',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777829576/Screenshot_2026-05-03_at_19.32.27_hue0lj.png',
+    available: true,
+  },
+  {
     name: 'Ailes de poulet',
     description: 'Ailes de poulet marinées et grillées, accompagnées de sauce piquante.',
     price: 10,
