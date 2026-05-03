@@ -54,15 +54,15 @@ export default function MenuPage() {
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white border-b shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-center">
             <Image
               src="https://res.cloudinary.com/dkd3k6eau/image/upload/v1777656884/logo_idrmeb.png"
               alt="Le KIRA"
-              width={40}
-              height={40}
+              width={64}
+              height={64}
               className="rounded-full"
             />
-            <p className="text-xs text-gray-400">Table {tableId}</p>
+            <p className="text-xs font-semibold text-gray-500 mt-1">Table {tableId}</p>
           </div>
           <CartButton />
         </div>
