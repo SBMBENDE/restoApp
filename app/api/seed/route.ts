@@ -165,7 +165,7 @@ const MENU_SEED = [
     description: 'Fanta orange glacé. 33cl 3€ / 1L 6€.',
     price: 3,
     category: 'Boissons',
-    image: 'https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777828922/Screenshot_2026-05-03_at_19.19.50_epjkok.png',
     available: true,
   },
   {

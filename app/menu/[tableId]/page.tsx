@@ -62,10 +62,7 @@ export default function MenuPage() {
               height={40}
               className="rounded-full"
             />
-            <div>
-              <h1 className="text-xl font-bold text-gray-900 leading-none">Le KIRA</h1>
-              <p className="text-xs text-gray-400">Table {tableId}</p>
-            </div>
+            <p className="text-xs text-gray-400">Table {tableId}</p>
           </div>
           <CartButton />
         </div>
