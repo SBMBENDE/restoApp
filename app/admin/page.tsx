@@ -21,20 +21,21 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
 
-  async function loadMenu() {
-    try {
-      const res = await fetch('/api/menu')
-      if (!res.ok) throw new Error(`API error ${res.status}`)
-      const data: IMenuItem[] = await res.json()
-      setItems(Array.isArray(data) ? data : [])
-    } catch {
-      toast.error('Could not load menu items.')
-    } finally {
-      setLoading(false)
+  useEffect(() => {
+    async function loadMenu() {
+      try {
+        const res = await fetch('/api/menu')
+        if (!res.ok) throw new Error(`API error ${res.status}`)
+        const data: IMenuItem[] = await res.json()
+        setItems(Array.isArray(data) ? data : [])
+      } catch {
+        toast.error('Could not load menu items.')
+      } finally {
+        setLoading(false)
+      }
     }
-  }
-
-  useEffect(() => { loadMenu() }, [])
+    loadMenu()
+  }, [])
 
   function openAdd() {
     setForm(EMPTY_FORM)
@@ -62,7 +63,12 @@ export default function AdminPage() {
       if (!res.ok) throw new Error()
       toast.success(editingId ? 'Item updated!' : 'Item added!')
       setShowForm(false)
-      loadMenu()
+      // Reload menu
+      const updated = await fetch('/api/menu')
+      if (updated.ok) {
+        const data: IMenuItem[] = await updated.json()
+        setItems(Array.isArray(data) ? data : [])
+      }
     } catch {
       toast.error('Failed to save item.')
     }
