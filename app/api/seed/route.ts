@@ -99,7 +99,7 @@ const MENU_SEED = [
     description: 'Morceaux de porc marinés et grillés, servis avec sauce piquante.',
     price: 12,
     category: 'Braise',
-    image: 'https://images.unsplash.com/photo-1760504526047-69dcd554e14a?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777893938/porc_f5zsaa.png',
     available: true,
   },
   // ── Accompagnements ────────────────────────────────────
@@ -108,7 +108,7 @@ const MENU_SEED = [
     description: 'Riz blanc cuit à la vapeur.',
     price: 3,
     category: 'Accompagnements',
-    image: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400',
+    image: 'https://res.cloudinary.com/dkd3k6eau/image/upload/v1777894460/riz1_ejwlzm.png',
     available: true,
   },
   {
