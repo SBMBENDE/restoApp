@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
 import { IOrder, OrderStatus } from '@/models/Order'
 import StatusBadge from '@/components/StatusBadge'
 import { ChefHat, RefreshCw } from 'lucide-react'
@@ -25,7 +25,7 @@ export default function KitchenPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<OrderStatus | 'all'>('all')
 
-  const fetchOrders = useCallback(async () => {
+  const fetchOrders = async () => {
     try {
       const res = await fetch('/api/orders')
       if (!res.ok) throw new Error(`API error ${res.status}`)
@@ -36,13 +36,25 @@ export default function KitchenPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }
 
   useEffect(() => {
-    fetchOrders()
+    async function load() {
+      try {
+        const res = await fetch('/api/orders')
+        if (!res.ok) throw new Error(`API error ${res.status}`)
+        const data: IOrder[] = await res.json()
+        setOrders(Array.isArray(data) ? data : [])
+      } catch {
+        // silent poll failure
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
     const interval = setInterval(fetchOrders, POLL_INTERVAL)
     return () => clearInterval(interval)
-  }, [fetchOrders])
+  }, [])
 
   async function advanceStatus(order: IOrder) {
     const next = STATUS_FLOW[order.status]
