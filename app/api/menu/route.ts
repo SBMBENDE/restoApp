@@ -5,7 +5,7 @@ import { MenuItem } from '@/models/MenuItem'
 export async function GET() {
   try {
     await connectDB()
-    const items = await MenuItem.find({ available: true }).lean()
+    const items = await MenuItem.find({}).lean()
     return NextResponse.json(items)
   } catch (err) {
     console.error('[GET /api/menu]', err)

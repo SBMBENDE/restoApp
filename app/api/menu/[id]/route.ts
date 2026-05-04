@@ -16,6 +16,20 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    await connectDB()
+    const { id } = await params
+    const body = await req.json()
+    const updated = await MenuItem.findByIdAndUpdate(id, { $set: body }, { new: true })
+    if (!updated) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    return NextResponse.json(updated)
+  } catch (err) {
+    console.error('[PATCH /api/menu/[id]]', err)
+    return NextResponse.json({ error: 'Failed to update item' }, { status: 500 })
+  }
+}
+
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await connectDB()

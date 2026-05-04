@@ -9,20 +9,28 @@ export default function MenuItemCard({ item }: { item: IMenuItem }) {
   const { items, addItem, updateQuantity } = useCartStore()
   const cartItem = items.find((i) => i._id === item._id)
   const qty = cartItem?.quantity ?? 0
+  const unavailable = !item.available
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+    <div className={`bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow ${unavailable ? 'opacity-60' : ''}`}>
       <div className="relative h-44 w-full bg-gray-50">
         {item.image ? (
           <Image
             src={item.image}
             alt={item.name}
             fill
-            className="object-cover"
+            className={`object-cover ${unavailable ? 'grayscale' : ''}`}
             sizes="(max-width: 768px) 100vw, 33vw"
           />
         ) : (
           <div className="flex items-center justify-center h-full text-gray-300 text-4xl">🍽️</div>
+        )}
+        {unavailable && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              Out of stock
+            </span>
+          </div>
         )}
       </div>
 
@@ -33,7 +41,14 @@ export default function MenuItemCard({ item }: { item: IMenuItem }) {
         </div>
         <p className="text-sm text-gray-500 leading-snug line-clamp-2">{item.description}</p>
 
-        {qty === 0 ? (
+        {unavailable ? (
+          <button
+            disabled
+            className="mt-2 flex items-center justify-center gap-2 w-full bg-gray-200 text-gray-400 py-2 rounded-xl font-medium cursor-not-allowed"
+          >
+            Unavailable
+          </button>
+        ) : qty === 0 ? (
           <button
             onClick={() => addItem(item)}
             className="mt-2 flex items-center justify-center gap-2 w-full bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl font-medium transition-colors"

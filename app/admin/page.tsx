@@ -85,6 +85,24 @@ export default function AdminPage() {
     }
   }
 
+  async function toggleAvailable(item: IMenuItem) {
+    const id = String(item._id)
+    try {
+      const res = await fetch(`/api/menu/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ available: !item.available }),
+      })
+      if (!res.ok) throw new Error()
+      setItems((prev) =>
+        prev.map((i) => (String(i._id) === id ? { ...i, available: !item.available } : i))
+      )
+      toast.success(`${item.name} marked as ${!item.available ? 'available' : 'unavailable'}.`)
+    } catch {
+      toast.error('Failed to update availability.')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm">
@@ -131,15 +149,16 @@ export default function AdminPage() {
                       ${item.price.toFixed(2)}
                     </td>
                     <td className="px-4 py-3">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                      <button
+                        onClick={() => toggleAvailable(item)}
+                        className={`px-2 py-0.5 rounded-full text-xs font-semibold transition-colors ${
                           item.available
-                            ? 'bg-green-100 text-green-700'
-                            : 'bg-red-100 text-red-600'
+                            ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                            : 'bg-red-100 text-red-600 hover:bg-red-200'
                         }`}
                       >
-                        {item.available ? 'Yes' : 'No'}
-                      </span>
+                        {item.available ? '✓ Available' : '✗ Unavailable'}
+                      </button>
                     </td>
                     <td className="px-4 py-3 flex gap-2">
                       <button
