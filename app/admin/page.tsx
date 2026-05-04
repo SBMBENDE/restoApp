@@ -14,6 +14,8 @@ const EMPTY_FORM: Omit<IMenuItem, '_id'> = {
   available: true,
 }
 
+const CATEGORIES_ORDER = ['Plats', 'Accompagnements', 'Braise', 'Vins', 'Champagnes', 'Bières', 'Boissons']
+
 export default function AdminPage() {
   const [items, setItems] = useState<IMenuItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -141,41 +143,57 @@ export default function AdminPage() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((item) => (
-                  <tr key={String(item._id)} className="border-b last:border-0 hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium text-gray-800">{item.name}</td>
-                    <td className="px-4 py-3 text-gray-500">{item.category}</td>
-                    <td className="px-4 py-3 text-amber-600 font-semibold">
-                      ${item.price.toFixed(2)}
-                    </td>
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => toggleAvailable(item)}
-                        className={`px-2 py-0.5 rounded-full text-xs font-semibold transition-colors ${
-                          item.available
-                            ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                            : 'bg-red-100 text-red-600 hover:bg-red-200'
-                        }`}
-                      >
-                        {item.available ? '✓ Available' : '✗ Unavailable'}
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 flex gap-2">
-                      <button
-                        onClick={() => openEdit(item)}
-                        className="p-1.5 hover:bg-amber-50 text-amber-500 rounded-lg transition-colors"
-                      >
-                        <Pencil size={15} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(String(item._id))}
-                        className="p-1.5 hover:bg-red-50 text-red-400 rounded-lg transition-colors"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {[
+                  ...CATEGORIES_ORDER,
+                  ...items
+                    .map((i) => i.category)
+                    .filter((c, idx, arr) => !CATEGORIES_ORDER.includes(c) && arr.indexOf(c) === idx),
+                ].flatMap((cat) => {
+                  const group = items.filter((i) => i.category === cat)
+                  if (group.length === 0) return []
+                  return [
+                    <tr key={`header-${cat}`} className="bg-amber-50 border-b">
+                      <td colSpan={5} className="px-4 py-2 text-xs font-bold text-amber-700 uppercase tracking-wider">
+                        {cat}
+                      </td>
+                    </tr>,
+                    ...group.map((item) => (
+                      <tr key={String(item._id)} className="border-b last:border-0 hover:bg-gray-50">
+                        <td className="px-4 py-3 font-medium text-gray-800">{item.name}</td>
+                        <td className="px-4 py-3 text-gray-500">{item.category}</td>
+                        <td className="px-4 py-3 text-amber-600 font-semibold">
+                          €{item.price.toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => toggleAvailable(item)}
+                            className={`px-2 py-0.5 rounded-full text-xs font-semibold transition-colors ${
+                              item.available
+                                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                                : 'bg-red-100 text-red-600 hover:bg-red-200'
+                            }`}
+                          >
+                            {item.available ? '✓ Available' : '✗ Unavailable'}
+                          </button>
+                        </td>
+                        <td className="px-4 py-3 flex gap-2">
+                          <button
+                            onClick={() => openEdit(item)}
+                            className="p-1.5 hover:bg-amber-50 text-amber-500 rounded-lg transition-colors"
+                          >
+                            <Pencil size={15} />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(String(item._id))}
+                            className="p-1.5 hover:bg-red-50 text-red-400 rounded-lg transition-colors"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </td>
+                      </tr>
+                    )),
+                  ]
+                })}
               </tbody>
             </table>
           </div>
