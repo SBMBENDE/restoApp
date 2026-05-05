@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from 'mongoose'
+import mongoose, { Schema, Model } from 'mongoose'
 
 export type OrderStatus = 'pending' | 'preparing' | 'served'
 
@@ -12,6 +12,7 @@ export interface IOrderItem {
 export interface IOrder {
   _id?: string
   tableId: string
+  billId?: string
   items: IOrderItem[]
   status: OrderStatus
   total: number
@@ -29,6 +30,7 @@ const OrderItemSchema = new Schema<IOrderItem>({
 const OrderSchema = new Schema<IOrder>(
   {
     tableId: { type: String, required: true },
+    billId: { type: String, index: true },
     items: [OrderItemSchema],
     status: {
       type: String,

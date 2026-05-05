@@ -27,12 +27,13 @@ export default function KitchenPage() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch('/api/orders')
+      const res = await fetch('/api/orders', { cache: 'no-store' })
       if (!res.ok) throw new Error(`API error ${res.status}`)
       const data: IOrder[] = await res.json()
       setOrders(Array.isArray(data) ? data : [])
-    } catch {
-      // silent poll failure
+    } catch (err) {
+      toast.error('Could not load orders — check your connection')
+      console.error('[fetchOrders]', err)
     } finally {
       setLoading(false)
     }
@@ -41,12 +42,13 @@ export default function KitchenPage() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch('/api/orders')
+        const res = await fetch('/api/orders', { cache: 'no-store' })
         if (!res.ok) throw new Error(`API error ${res.status}`)
         const data: IOrder[] = await res.json()
         setOrders(Array.isArray(data) ? data : [])
-      } catch {
-        // silent poll failure
+      } catch (err) {
+        toast.error('Could not load orders — check your connection')
+        console.error('[fetchOrders]', err)
       } finally {
         setLoading(false)
       }
@@ -156,13 +158,13 @@ export default function KitchenPage() {
                     <span>
                       {item.quantity}× {item.name}
                     </span>
-                    <span className="text-gray-400">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="text-gray-400">€{(item.price * item.quantity).toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
 
               <div className="flex items-center justify-between pt-1">
-                <span className="font-bold text-white">${order.total.toFixed(2)}</span>
+                <span className="font-bold text-white">€{order.total.toFixed(2)}</span>
                 {STATUS_FLOW[order.status] && (
                   <button
                     onClick={() => advanceStatus(order)}

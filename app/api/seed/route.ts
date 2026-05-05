@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import { MenuItem } from '@/models/MenuItem'
 import { Order } from '@/models/Order'
@@ -293,7 +293,7 @@ const MENU_SEED = [
   },
 ]
 
-export async function POST(_req: NextRequest) {
+export async function POST() {
   if (process.env.NODE_ENV !== 'development') {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }

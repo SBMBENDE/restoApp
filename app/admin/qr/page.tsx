@@ -1,17 +1,19 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useSyncExternalStore } from 'react'
 import QRCode from 'qrcode'
 import { UtensilsCrossed, Download } from 'lucide-react'
 
 const TABLE_COUNT = 10
 
-export default function QRPage() {
-  const [baseUrl, setBaseUrl] = useState('')
+const noopSubscribe = () => () => {}
 
-  useEffect(() => {
-    setBaseUrl(window.location.origin)
-  }, [])
+export default function QRPage() {
+  const baseUrl = useSyncExternalStore(
+    noopSubscribe,
+    () => window.location.origin,
+    () => '',
+  )
 
   return (
     <div className="min-h-screen bg-gray-50">

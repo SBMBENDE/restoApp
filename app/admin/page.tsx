@@ -2,8 +2,15 @@
 
 import { useEffect, useState } from 'react'
 import { IMenuItem } from '@/models/MenuItem'
-import { Pencil, Trash2, Plus, Settings } from 'lucide-react'
+import { IOrder } from '@/models/Order'
+import { IBill } from '@/models/Bill'
+import { Pencil, Trash2, Plus, Settings, Receipt, GitMerge } from 'lucide-react'
 import toast from 'react-hot-toast'
+
+interface IBillWithOrders extends IBill {
+  orders: IOrder[]
+  total: number
+}
 
 const EMPTY_FORM: Omit<IMenuItem, '_id'> = {
   name: '',
@@ -17,11 +24,19 @@ const EMPTY_FORM: Omit<IMenuItem, '_id'> = {
 const CATEGORIES_ORDER = ['Plats', 'Accompagnements', 'Braise', 'Vins', 'Champagnes', 'Bières', 'Boissons']
 
 export default function AdminPage() {
+  const [tab, setTab] = useState<'menu' | 'bills'>('menu')
   const [items, setItems] = useState<IMenuItem[]>([])
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState<Omit<IMenuItem, '_id'>>(EMPTY_FORM)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [showForm, setShowForm] = useState(false)
+
+  // Bills state
+  const [bills, setBills] = useState<IBillWithOrders[]>([])
+  const [billsLoading, setBillsLoading] = useState(false)
+  const [mergeTarget, setMergeTarget] = useState<string>('')
+  const [mergeSource, setMergeSource] = useState<string>('')
+  const [merging, setMerging] = useState(false)
 
   useEffect(() => {
     async function loadMenu() {
@@ -38,6 +53,66 @@ export default function AdminPage() {
     }
     loadMenu()
   }, [])
+
+  async function loadBills() {
+    setBillsLoading(true)
+    try {
+      const res = await fetch('/api/bills', { cache: 'no-store' })
+      if (!res.ok) throw new Error()
+      const data: IBillWithOrders[] = await res.json()
+      setBills(data)
+    } catch {
+      toast.error('Could not load bills.')
+    } finally {
+      setBillsLoading(false)
+    }
+  }
+
+  async function markPaid(billId: string) {
+    try {
+      const res = await fetch(`/api/bills/${billId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'paid' }),
+      })
+      if (!res.ok) throw new Error()
+      toast.success('Bill marked as paid.')
+      loadBills()
+    } catch {
+      toast.error('Failed to update bill.')
+    }
+  }
+
+  async function mergeBills() {
+    if (!mergeTarget || !mergeSource) {
+      toast.error('Select both bills to merge.')
+      return
+    }
+    if (mergeTarget === mergeSource) {
+      toast.error('Cannot merge a bill with itself.')
+      return
+    }
+    setMerging(true)
+    try {
+      const res = await fetch('/api/bills/merge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetBillId: mergeTarget, sourceBillId: mergeSource }),
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error)
+      }
+      toast.success('Tables merged successfully.')
+      setMergeTarget('')
+      setMergeSource('')
+      loadBills()
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Merge failed.')
+    } finally {
+      setMerging(false)
+    }
+  }
 
   function openAdd() {
     setForm(EMPTY_FORM)
@@ -113,17 +188,45 @@ export default function AdminPage() {
           <h1 className="text-xl font-bold text-gray-800">Le KIRA — Admin</h1>
         </div>
         <div className="flex gap-3">
-          <button
-            onClick={openAdd}
-            className="flex items-center gap-2 text-sm px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-medium transition-colors"
-          >
-            <Plus size={16} />
-            Add Item
-          </button>
+          {tab === 'menu' && (
+            <button
+              onClick={openAdd}
+              className="flex items-center gap-2 text-sm px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-medium transition-colors"
+            >
+              <Plus size={16} />
+              Add Item
+            </button>
+          )}
         </div>
       </header>
 
+      {/* Tabs */}
+      <div className="bg-white border-b px-6 flex gap-1">
+        <button
+          onClick={() => setTab('menu')}
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            tab === 'menu' ? 'border-amber-500 text-amber-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <Settings size={15} />
+          Menu
+        </button>
+        <button
+          onClick={() => { setTab('bills'); loadBills() }}
+          className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            tab === 'bills' ? 'border-amber-500 text-amber-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <Receipt size={15} />
+          Bills
+        </button>
+      </div>
+
       <main className="max-w-5xl mx-auto px-4 py-6">
+
+        {/* ── MENU TAB ────────────────────────────────── */}
+        {tab === 'menu' && (
+          <>
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -131,15 +234,15 @@ export default function AdminPage() {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  {['Name', 'Category', 'Price', 'Available', 'Actions'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 font-semibold text-gray-600">
-                      {h}
-                    </th>
-                  ))}
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Name</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600 hidden sm:table-cell">Category</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Price</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Available</th>
+                  <th className="text-left px-4 py-3 font-semibold text-gray-600">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -160,7 +263,7 @@ export default function AdminPage() {
                     ...group.map((item) => (
                       <tr key={String(item._id)} className="border-b last:border-0 hover:bg-gray-50">
                         <td className="px-4 py-3 font-medium text-gray-800">{item.name}</td>
-                        <td className="px-4 py-3 text-gray-500">{item.category}</td>
+                        <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{item.category}</td>
                         <td className="px-4 py-3 text-amber-600 font-semibold">
                           €{item.price.toFixed(2)}
                         </td>
@@ -198,6 +301,116 @@ export default function AdminPage() {
             </table>
           </div>
         )}
+          </>
+        )}
+
+        {/* ── BILLS TAB ───────────────────────────────── */}
+        {tab === 'bills' && (
+          <div className="space-y-6">
+
+            {/* Merge panel */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <h2 className="text-base font-bold text-gray-800 mb-4 flex items-center gap-2">
+                <GitMerge size={18} className="text-amber-500" />
+                Merge Tables
+              </h2>
+              {bills.length < 2 ? (
+                <p className="text-sm text-gray-400">At least 2 open bills are required to merge.</p>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-end">
+                  <div className="flex-1">
+                    <label className="block text-xs text-gray-500 mb-1">Keep this bill (target)</label>
+                    <select
+                      value={mergeTarget}
+                      onChange={(e) => setMergeTarget(e.target.value)}
+                      className="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                    >
+                      <option value="">Select bill…</option>
+                      {bills.map((b) => (
+                        <option key={String(b._id)} value={String(b._id)}>
+                          Tables {b.tableIds.map((t) => `T-${t}`).join(', ')} — €{b.total.toFixed(2)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex-1">
+                    <label className="block text-xs text-gray-500 mb-1">Merge into it (source)</label>
+                    <select
+                      value={mergeSource}
+                      onChange={(e) => setMergeSource(e.target.value)}
+                      className="w-full border border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+                    >
+                      <option value="">Select bill…</option>
+                      {bills
+                        .filter((b) => String(b._id) !== mergeTarget)
+                        .map((b) => (
+                          <option key={String(b._id)} value={String(b._id)}>
+                            Tables {b.tableIds.map((t) => `T-${t}`).join(', ')} — €{b.total.toFixed(2)}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                  <button
+                    onClick={mergeBills}
+                    disabled={merging || !mergeTarget || !mergeSource}
+                    className="flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-sm rounded-xl font-medium transition-colors whitespace-nowrap"
+                  >
+                    <GitMerge size={15} />
+                    {merging ? 'Merging…' : 'Merge'}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Bills list */}
+            {billsLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="h-24 bg-white rounded-2xl animate-pulse" />
+                ))}
+              </div>
+            ) : bills.length === 0 ? (
+              <p className="text-gray-400 text-center py-16">No open bills.</p>
+            ) : (
+              <div className="space-y-4">
+                {bills.map((bill) => (
+                  <div key={String(bill._id)} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <span className="text-sm font-bold text-gray-800">
+                          {bill.tableIds.map((t) => `Table ${t}`).join(' + ')}
+                        </span>
+                        <span className="ml-3 text-xs text-gray-400">
+                          {bill.orders.length} order{bill.orders.length !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-lg font-bold text-amber-500">€{bill.total.toFixed(2)}</span>
+                        <button
+                          onClick={() => markPaid(String(bill._id))}
+                          className="text-xs px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors"
+                        >
+                          Mark Paid
+                        </button>
+                      </div>
+                    </div>
+                    <ul className="text-xs text-gray-500 space-y-1 border-t border-gray-100 pt-3">
+                      {bill.orders.map((o) => (
+                        <li key={String(o._id)} className="flex justify-between">
+                          <span>
+                            T-{o.tableId} · {o.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}
+                          </span>
+                          <span className="text-gray-400">€{o.total.toFixed(2)}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
       </main>
 
       {/* Modal Form */}

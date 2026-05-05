@@ -79,7 +79,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               <div key={item._id} className="flex items-center gap-3">
                 <div className="flex-1">
                   <p className="font-medium text-gray-800 text-sm">{item.name}</p>
-                  <p className="text-amber-600 text-sm">${(item.price * item.quantity).toFixed(2)}</p>
+                  <p className="text-amber-600 text-sm">€{(item.price * item.quantity).toFixed(2)}</p>
                 </div>
                 <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1">
                   <button
@@ -112,7 +112,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           <div className="px-5 py-4 border-t space-y-3">
             <div className="flex justify-between font-bold text-gray-800 text-lg">
               <span>Total</span>
-              <span>${total().toFixed(2)}</span>
+              <span>€{total().toFixed(2)}</span>
             </div>
             <button
               onClick={placeOrder}

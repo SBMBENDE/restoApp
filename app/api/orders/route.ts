@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/mongodb'
 import { Order } from '@/models/Order'
+import { Bill } from '@/models/Bill'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
@@ -29,7 +32,13 @@ export async function POST(req: NextRequest) {
       0
     )
 
-    const order = await Order.create({ tableId, items, total, status: 'pending' })
+    // Find or create an open bill for this table
+    let bill = await Bill.findOne({ tableIds: tableId, status: 'open' })
+    if (!bill) {
+      bill = await Bill.create({ tableIds: [tableId], status: 'open' })
+    }
+
+    const order = await Order.create({ tableId, billId: String(bill._id), items, total, status: 'pending' })
     return NextResponse.json(order, { status: 201 })
   } catch (err) {
     console.error('[POST /api/orders]', err)
