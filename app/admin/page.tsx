@@ -33,7 +33,9 @@ export default function AdminPage() {
 
   // Bills state
   const [bills, setBills] = useState<IBillWithOrders[]>([])
+  const [paidBills, setPaidBills] = useState<IBillWithOrders[]>([])
   const [billsLoading, setBillsLoading] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
   const [mergeTarget, setMergeTarget] = useState<string>('')
   const [mergeSource, setMergeSource] = useState<string>('')
   const [merging, setMerging] = useState(false)
@@ -57,10 +59,17 @@ export default function AdminPage() {
   async function loadBills() {
     setBillsLoading(true)
     try {
-      const res = await fetch('/api/bills', { cache: 'no-store' })
-      if (!res.ok) throw new Error()
-      const data: IBillWithOrders[] = await res.json()
-      setBills(data)
+      const [openRes, paidRes] = await Promise.all([
+        fetch('/api/bills?status=open', { cache: 'no-store' }),
+        fetch('/api/bills?status=paid', { cache: 'no-store' }),
+      ])
+      if (!openRes.ok || !paidRes.ok) throw new Error()
+      const [openData, paidData]: [IBillWithOrders[], IBillWithOrders[]] = await Promise.all([
+        openRes.json(),
+        paidRes.json(),
+      ])
+      setBills(openData)
+      setPaidBills(paidData)
     } catch {
       toast.error('Could not load bills.')
     } finally {
@@ -408,6 +417,52 @@ export default function AdminPage() {
                 ))}
               </div>
             )}
+
+            {/* Paid Bills History */}
+            <div className="mt-6">
+              <button
+                onClick={() => setShowHistory((v) => !v)}
+                className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
+              >
+                <span>{showHistory ? '▾' : '▸'}</span>
+                Paid Bills History ({paidBills.length})
+              </button>
+
+              {showHistory && (
+                <div className="mt-3 space-y-3">
+                  {paidBills.length === 0 ? (
+                    <p className="text-gray-400 text-sm text-center py-6">No paid bills yet.</p>
+                  ) : (
+                    paidBills.map((bill) => (
+                      <div key={String(bill._id)} className="bg-gray-50 rounded-2xl border border-gray-100 p-4 opacity-75">
+                        <div className="flex items-center justify-between mb-2">
+                          <div>
+                            <span className="text-sm font-semibold text-gray-600">
+                              {bill.tableIds.map((t) => `Table ${t}`).join(' + ')}
+                            </span>
+                            <span className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                              Paid
+                            </span>
+                            <span className="ml-2 text-xs text-gray-400">
+                              {bill.closedAt ? new Date(bill.closedAt).toLocaleString() : ''}
+                            </span>
+                          </div>
+                          <span className="text-base font-bold text-gray-500">€{bill.total.toFixed(2)}</span>
+                        </div>
+                        <ul className="text-xs text-gray-400 space-y-1 border-t border-gray-100 pt-2">
+                          {bill.orders.map((o) => (
+                            <li key={String(o._id)} className="flex justify-between">
+                              <span>T-{o.tableId} · {o.items.map((i) => `${i.quantity}× ${i.name}`).join(', ')}</span>
+                              <span>€{o.total.toFixed(2)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         )}
 

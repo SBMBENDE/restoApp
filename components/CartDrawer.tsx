@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { X, Trash2, ShoppingBag } from 'lucide-react'
 import { useCartStore } from '@/store/cartStore'
+import { useLangStore, useT } from '@/store/langStore'
 import toast from 'react-hot-toast'
 
 interface CartDrawerProps {
@@ -12,6 +13,7 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   const { items, tableId, updateQuantity, removeItem, clearCart, total } = useCartStore()
+  const t = useT()
   const [placing, setPlacing] = useState(false)
 
   async function placeOrder() {
@@ -37,9 +39,9 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       }
       clearCart()
       onClose()
-      toast.success('Order placed! The kitchen is on it 🍴')
+      toast.success(t.cart.success)
     } catch {
-      toast.error('Could not place order. Please try again.')
+      toast.error(t.cart.error)
     } finally {
       setPlacing(false)
     }
@@ -63,7 +65,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         <div className="flex items-center justify-between px-5 py-4 border-b">
           <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
             <ShoppingBag size={20} className="text-amber-500" />
-            Your Order — Table {tableId}
+            {t.cart.title.replace('{tableId}', tableId)}
           </h2>
           <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded-lg">
             <X size={20} />
@@ -73,12 +75,14 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         {/* Items */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
           {items.length === 0 ? (
-            <p className="text-gray-400 text-center mt-20">Your cart is empty.</p>
+            <p className="text-gray-400 text-center mt-20">{t.cart.empty}</p>
           ) : (
             items.map((item) => (
               <div key={item._id} className="flex items-center gap-3">
                 <div className="flex-1">
-                  <p className="font-medium text-gray-800 text-sm">{item.name}</p>
+                  <p className="font-medium text-gray-800 text-sm">
+                    {t.itemNames[item.name as keyof typeof t.itemNames] ?? item.name}
+                  </p>
                   <p className="text-amber-600 text-sm">€{(item.price * item.quantity).toFixed(2)}</p>
                 </div>
                 <div className="flex items-center gap-2 bg-gray-100 rounded-lg px-2 py-1">
@@ -111,7 +115,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         {items.length > 0 && (
           <div className="px-5 py-4 border-t space-y-3">
             <div className="flex justify-between font-bold text-gray-800 text-lg">
-              <span>Total</span>
+              <span>{t.cart.total}</span>
               <span>€{total().toFixed(2)}</span>
             </div>
             <button
@@ -119,7 +123,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
               disabled={placing}
               className="w-full bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white py-3 rounded-xl font-semibold transition-colors"
             >
-              {placing ? 'Placing order…' : 'Place Order'}
+              {placing ? t.cart.placing : t.cart.placeOrder}
             </button>
           </div>
         )}

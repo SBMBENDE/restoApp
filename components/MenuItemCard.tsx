@@ -4,9 +4,11 @@ import Image from 'next/image'
 import { Plus, Minus, ShoppingCart } from 'lucide-react'
 import { IMenuItem } from '@/models/MenuItem'
 import { useCartStore } from '@/store/cartStore'
+import { useT } from '@/store/langStore'
 
 export default function MenuItemCard({ item }: { item: IMenuItem }) {
   const { items, addItem, updateQuantity } = useCartStore()
+  const t = useT()
   const cartItem = items.find((i) => i._id === item._id)
   const qty = cartItem?.quantity ?? 0
   const unavailable = !item.available
@@ -28,7 +30,7 @@ export default function MenuItemCard({ item }: { item: IMenuItem }) {
         {unavailable && (
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="bg-black/60 text-white text-xs font-semibold px-3 py-1 rounded-full">
-              Out of stock
+              {t.item.outOfStock}
             </span>
           </div>
         )}
@@ -36,17 +38,21 @@ export default function MenuItemCard({ item }: { item: IMenuItem }) {
 
       <div className="p-4 flex flex-col gap-2">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-semibold text-gray-800 leading-tight">{item.name}</h3>
+          <h3 className="font-semibold text-gray-800 leading-tight">
+            {t.itemNames[item.name as keyof typeof t.itemNames] ?? item.name}
+          </h3>
           <span className="text-amber-600 font-bold whitespace-nowrap">€{item.price.toFixed(2)}</span>
         </div>
-        <p className="text-sm text-gray-500 leading-snug line-clamp-2">{item.description}</p>
+        <p className="text-sm text-gray-500 leading-snug line-clamp-2">
+          {t.itemDescriptions[item.name as keyof typeof t.itemDescriptions] ?? item.description}
+        </p>
 
         {unavailable ? (
           <button
             disabled
             className="mt-2 flex items-center justify-center gap-2 w-full bg-gray-200 text-gray-400 py-2 rounded-xl font-medium cursor-not-allowed"
           >
-            Unavailable
+            {t.item.unavailable}
           </button>
         ) : qty === 0 ? (
           <button
@@ -54,7 +60,7 @@ export default function MenuItemCard({ item }: { item: IMenuItem }) {
             className="mt-2 flex items-center justify-center gap-2 w-full bg-amber-500 hover:bg-amber-600 text-white py-2 rounded-xl font-medium transition-colors"
           >
             <ShoppingCart size={16} />
-            Add to cart
+            {t.item.addToCart}
           </button>
         ) : (
           <div className="mt-2 flex items-center justify-between bg-amber-50 rounded-xl px-2 py-1">

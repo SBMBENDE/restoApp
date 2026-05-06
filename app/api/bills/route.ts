@@ -5,11 +5,15 @@ import { Order } from '@/models/Order'
 
 export const dynamic = 'force-dynamic'
 
-// GET /api/bills — list all open bills with their orders and computed total
-export async function GET() {
+// GET /api/bills?status=open|paid|all — list bills with their orders and computed total
+export async function GET(req: Request) {
   try {
     await connectDB()
-    const bills = await Bill.find({ status: 'open' }).sort({ createdAt: -1 }).lean()
+    const { searchParams } = new URL(req.url)
+    const status = searchParams.get('status') ?? 'open'
+
+    const query = status === 'all' ? {} : { status }
+    const bills = await Bill.find(query).sort({ createdAt: -1 }).lean()
 
     const billIds = bills.map((b) => String(b._id))
     const orders = await Order.find({ billId: { $in: billIds } }).lean()

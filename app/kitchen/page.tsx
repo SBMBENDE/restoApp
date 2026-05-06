@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IOrder, OrderStatus } from '@/models/Order'
 import StatusBadge from '@/components/StatusBadge'
-import { ChefHat, RefreshCw } from 'lucide-react'
+import { ChefHat, RefreshCw, Volume2, VolumeX } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const STATUS_FLOW: Record<OrderStatus, OrderStatus | null> = {
@@ -24,13 +24,63 @@ export default function KitchenPage() {
   const [orders, setOrders] = useState<IOrder[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<OrderStatus | 'all'>('all')
+  const [soundEnabled, setSoundEnabled] = useState(true)
+
+  const audioCtxRef = useRef<AudioContext | null>(null)
+  const knownIdsRef = useRef<Set<string>>(new Set())
+  const isInitialRef = useRef(true)
+  const soundEnabledRef = useRef(true)
+
+  useEffect(() => {
+    soundEnabledRef.current = soundEnabled
+  }, [soundEnabled])
+
+  function playChime() {
+    if (!soundEnabledRef.current) return
+    try {
+      if (!audioCtxRef.current) {
+        audioCtxRef.current = new AudioContext()
+      }
+      const ctx = audioCtxRef.current
+      if (ctx.state === 'suspended') ctx.resume()
+      const now = ctx.currentTime
+      // Ascending three-note chime: C5 → E5 → G5
+      const notes = [523.25, 659.25, 783.99]
+      notes.forEach((freq, i) => {
+        const osc = ctx.createOscillator()
+        const gain = ctx.createGain()
+        osc.connect(gain)
+        gain.connect(ctx.destination)
+        osc.type = 'sine'
+        osc.frequency.value = freq
+        const t = now + i * 0.18
+        gain.gain.setValueAtTime(0, t)
+        gain.gain.linearRampToValueAtTime(0.35, t + 0.015)
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.55)
+        osc.start(t)
+        osc.stop(t + 0.55)
+      })
+    } catch (e) {
+      console.warn('[playChime]', e)
+    }
+  }
 
   const fetchOrders = async () => {
     try {
       const res = await fetch('/api/orders', { cache: 'no-store' })
       if (!res.ok) throw new Error(`API error ${res.status}`)
       const data: IOrder[] = await res.json()
-      setOrders(Array.isArray(data) ? data : [])
+      const newOrders = Array.isArray(data) ? data : []
+
+      if (!isInitialRef.current) {
+        const hasNew = newOrders.some((o) => !knownIdsRef.current.has(String(o._id)))
+        if (hasNew) playChime()
+      }
+
+      knownIdsRef.current = new Set(newOrders.map((o) => String(o._id)))
+      isInitialRef.current = false
+
+      setOrders(newOrders)
     } catch (err) {
       toast.error('Could not load orders — check your connection')
       console.error('[fetchOrders]', err)
@@ -45,7 +95,10 @@ export default function KitchenPage() {
         const res = await fetch('/api/orders', { cache: 'no-store' })
         if (!res.ok) throw new Error(`API error ${res.status}`)
         const data: IOrder[] = await res.json()
-        setOrders(Array.isArray(data) ? data : [])
+        const newOrders = Array.isArray(data) ? data : []
+        knownIdsRef.current = new Set(newOrders.map((o) => String(o._id)))
+        isInitialRef.current = false
+        setOrders(newOrders)
       } catch (err) {
         toast.error('Could not load orders — check your connection')
         console.error('[fetchOrders]', err)
@@ -56,6 +109,7 @@ export default function KitchenPage() {
     load()
     const interval = setInterval(fetchOrders, POLL_INTERVAL)
     return () => clearInterval(interval)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function advanceStatus(order: IOrder) {
@@ -98,13 +152,22 @@ export default function KitchenPage() {
             <p className="text-xs text-gray-400">Updates every {POLL_INTERVAL / 1000}s</p>
           </div>
         </div>
-        <button
-          onClick={fetchOrders}
-          className="flex items-center gap-2 text-sm text-gray-300 hover:text-white bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition-colors"
-        >
-          <RefreshCw size={15} />
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setSoundEnabled((v) => !v)}
+            title={soundEnabled ? 'Mute alerts' : 'Unmute alerts'}
+            className="flex items-center gap-2 text-sm text-gray-300 hover:text-white bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition-colors"
+          >
+            {soundEnabled ? <Volume2 size={15} /> : <VolumeX size={15} className="text-gray-500" />}
+          </button>
+          <button
+            onClick={fetchOrders}
+            className="flex items-center gap-2 text-sm text-gray-300 hover:text-white bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg transition-colors"
+          >
+            <RefreshCw size={15} />
+            Refresh
+          </button>
+        </div>
       </header>
 
       {/* Filter tabs */}
