@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const status = searchParams.get('status') ?? 'open'
 
-    const query = status === 'all' ? {} : { status }
+    const query = status === 'all' ? {} : { status: status as 'open' | 'paid' }
     const bills = await Bill.find(query).sort({ createdAt: -1 }).lean()
 
     const billIds = bills.map((b) => String(b._id))
