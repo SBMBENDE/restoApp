@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const status = searchParams.get('status') ?? 'pending'
 
-    const query = status === 'all' ? {} : { status }
+    const query = status === 'all' ? {} : { status: status as 'pending' | 'done' }
     const requests = await TableRequest.find(query).sort({ createdAt: -1 }).lean()
 
     // For bill requests, look up the open bill total per table
